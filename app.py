@@ -1,6 +1,9 @@
 '''
     Source:
+    
     https://realpython.com/python-redis/
+
+    https://medium.com/better-programming/tips-and-tricks-for-handling-logging-files-in-python-b48be3d553ad
 '''
 
 from flask import Flask, jsonify, request
