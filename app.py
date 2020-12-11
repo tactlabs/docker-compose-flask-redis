@@ -94,6 +94,29 @@ def get_api_hit_count():
 
     return jsonify(result) 
 
+'''
+    http://0.0.0.0:5000/api/reset?api_key=one
+'''
+@app.route('/api/reset')
+def reset_api_hit_count():
+
+    api_key = request.values.get('api_key')
+
+    api_hit_count = redis.get(api_key)
+
+    if(not api_hit_count):
+        print('Is not available, so no need to reset')
+    else:
+        redis.set(api_key, 0)
+        print('hard reset done on ', api_key)
+
+    result = {
+        'api_key' : api_key,
+        'result' : 'reset done'
+    }
+
+    return jsonify(result) 
+
 
 def get_name_score():
 
