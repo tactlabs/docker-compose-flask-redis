@@ -20,7 +20,7 @@ redis = Redis(host='redis', port=6379)
 @app.route('/')
 def home():
     
-    count = redis.incr('hits')
+    count = redis.incr('apikey')
 
     result  = {
         'count' : count
@@ -68,13 +68,43 @@ def name_score():
 
     return jsonify(result) 
 
+'''
+    http://0.0.0.0:5000/api?api_key=one
+'''
+@app.route('/api')
+def get_api_hit_count():
+
+    api_key = request.values.get('api_key')
+
+    api_hit_count = redis.get(api_key)
+
+    if(not api_hit_count):
+        api_hit_count = 0
+    else:
+        api_hit_count = int(api_hit_count)
+
+    api_hit_count = api_hit_count + 1
+
+    redis.set(api_key, api_hit_count)
+
+    result = {
+        'api_key' : api_key,
+        'api_hit_count' : int(api_hit_count)
+    }
+
+    return jsonify(result) 
+
+
 def get_name_score():
 
     logging.info('get score fresh')
+
+    name = request.values.get('name')
 
     return rd.randint(1, 1000)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(filename='out.log',level=logging.INFO)
-    app.run(host="0.0.0.0", debug=True)
+
+    logging.basicConfig(filename = 'out.log', level = logging.INFO)
+    app.run(host = "0.0.0.0", debug = True)
