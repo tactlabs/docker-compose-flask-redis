@@ -9,6 +9,7 @@
 from flask import Flask, jsonify, request
 from redis import Redis
 import random as rd
+import store_redis as sr
 import logging
 
 app = Flask(__name__)
@@ -116,6 +117,25 @@ def reset_api_hit_count():
     }
 
     return jsonify(result) 
+
+'''
+    http://0.0.0.0:5000/api/user/<username>/<word>
+'''
+@app.route('/api/user/<username>/<word>')
+def api_store_user_word(username, word):
+
+    result = sr.store_words_for_user(username, word)
+
+    result = result.decode('UTF-8')
+
+    word_list = result.split(',')
+
+    word_dict = {
+        username : word_list
+    }
+
+    return jsonify(word_dict) 
+
 
 
 def get_name_score():
